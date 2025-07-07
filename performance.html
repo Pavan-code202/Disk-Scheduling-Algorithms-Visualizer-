@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Metrics</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <style>
+        /* Page background */
+        body {
+            background-color: white;
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            text-align: center;
+        }
+
+        /* Heading */
+        h2 {
+            color: #333; /* Dark Gray */
+            text-align: center;
+        }
+
+        /* Table Styling */
+        table {
+            width: 80%;
+            margin: auto;
+            border-collapse: collapse;
+            background: #f9f9f9; /* Light Gray Background */
+        }
+
+        th, td {
+            border: 2px solid #5a6d96; /* Blue Borders */
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #5a6d96; /* Dark Blue */
+            color: white;
+        }
+
+        /* Reset Button */
+        #reset-data {
+            background-color: #5a6d96;
+            color: white;
+            border: 2px solid black;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+            margin-top: 20px;
+        }
+
+        #reset-data:hover {
+            background-color: #0763b8;
+            border-color: #5e47de;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Disk Scheduling Performance Metrics</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Algorithm</th>
+                <th>Total Seek Time</th>
+                <th>Average Seek Time</th>
+                <th>Latency</th>
+                <th>Head Movements</th>
+            </tr>
+        </thead>
+        <tbody id="performance-data">
+            <!-- Data will be inserted here -->
+        </tbody>
+    </table>
+    <button id="reset-data">Reset Data</button>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let tableBody = document.getElementById("performance-data");
+
+            function loadTableData() {
+                tableBody.innerHTML = ""; // Clear existing data
+                let data = JSON.parse(localStorage.getItem("performanceMetrics")) || [];
+
+                data.forEach(entry => {
+                    // Ensure all numerical values are converted properly
+                    let seekTime = parseFloat(entry.seekTime) || 0;
+                    let avgSeekTime = parseFloat(entry.avgSeekTime) || 0;
+                    let latency = parseFloat(entry.latency) || 0;
+                    let headMovements = parseInt(entry.headMovements) || 0;
+
+                    let row = `<tr>
+                        <td>${entry.algorithm}</td>
+                        <td>${seekTime.toFixed(2)} ms</td>
+                        <td>${avgSeekTime.toFixed(2)} ms</td>
+                        <td>${latency.toFixed(2)} ms</td>
+                        <td>${headMovements}</td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            }
+
+            loadTableData();
+
+            // Reset button functionality
+            document.getElementById("reset-data").addEventListener("click", function () {
+                console.log("Reset button clicked");
+                localStorage.removeItem("performanceMetrics"); // Clear stored data
+                loadTableData(); // Refresh the table
+            });
+        });
+
+        // Example: Function to store data (Ensure numbers are stored properly)
+        function savePerformanceData(algorithm, seek, inp) {
+            let avgSeekTime = inp.length > 0 ? Number(seek / inp.length) : 0;
+            let latency = inp.length > 0 ? Number(seek / (2 * inp.length)) : 0;
+            let headMovements = inp.length > 0 ? inp.length - 1 : 0;
+
+            var performanceMetrics = {
+                algorithm: algorithm,
+                seekTime: Number(seek), // Store as a number
+                avgSeekTime: avgSeekTime,
+                latency: latency,
+                headMovements: headMovements
+            };
+
+            let existingMetrics = JSON.parse(localStorage.getItem("performanceMetrics")) || [];
+            existingMetrics.push(performanceMetrics);
+            localStorage.setItem("performanceMetrics", JSON.stringify(existingMetrics));
+        }
+
+    
+    </script>
+
+</body>
+</html>

@@ -1,4 +1,3 @@
-[README (1).md](https://github.com/user-attachments/files/21603889/README.1.md)
 # Disk-Scheduling-Algorithms-Visualization (OS-Project)
 
 ### Languages : HTML5, CSS, JS <br>
